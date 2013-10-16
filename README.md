@@ -1,20 +1,24 @@
 # Lingr notification step
 
+before using gem, need to make bot of Lingr. [Lingr/developer](http://lingr.com/developer)
+
 ## Options
 
-* ``room-id`` (required)
 * ``bot-id`` (required)
-* ``secret`` (required)
-* ``message`` 
+* ``sercret`` (required)
+* ``room-id`` (required)
+* ``on``
+* ``message``
 
 ## Example
 
 ```
-- 1syo/lingr-notify@0.0.1:
-    room-id: YOUR_ROOM_ID
-    bot-id: YOUR_BOT_ID
-    secret: YOUR_SECRET
-    message: Deploy it!
+build:
+  after-steps:
+    - 1syo/lingr-notify@0.0.1:
+        bot-id: YOUR_BOT_ID
+        sercret: YOUR_SECRET
+        room-id: YOUR_ROOM_ID
 ```
 
 ## License
