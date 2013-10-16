@@ -15,7 +15,7 @@ before using gem, need to make bot of Lingr. [Lingr/developer](http://lingr.com/
 ```
 build:
   after-steps:
-    - 1syo/lingr-notify@0.0.3:
+    - 1syo/lingr-notify@0.0.4:
         bot-id: YOUR_BOT_ID
         secret: YOUR_SECRET
         room-id: YOUR_ROOM_ID
