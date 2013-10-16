@@ -7,7 +7,7 @@ properties:
   bot-id:
     type: string
     required: true
-  sercret:
+  secret:
     type: string
     required: true
   room-id:

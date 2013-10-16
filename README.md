@@ -5,7 +5,7 @@ before using gem, need to make bot of Lingr. [Lingr/developer](http://lingr.com/
 ## Options
 
 * ``bot-id`` (required)
-* ``sercret`` (required)
+* ``secret`` (required)
 * ``room-id`` (required)
 * ``on``
 * ``message``
@@ -17,7 +17,7 @@ build:
   after-steps:
     - 1syo/lingr-notify@0.0.1:
         bot-id: YOUR_BOT_ID
-        sercret: YOUR_SECRET
+        secret: YOUR_SECRET
         room-id: YOUR_ROOM_ID
 ```
 
