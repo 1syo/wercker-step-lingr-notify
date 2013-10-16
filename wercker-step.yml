@@ -4,15 +4,18 @@ description: Send deploy notification to lingr
 keywords:
   - notification
 properties:
-  room-id:
-    type: string
-    required: true
   bot-id:
     type: string
     required: true
-  secret:
+  sercret:
     type: string
     required: true
+  room-id:
+    type: string
+    required: true
+  on:
+    type: string
+    default: always
   message:
     type: string
     required: false
