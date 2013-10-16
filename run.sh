@@ -22,7 +22,7 @@ if [ ! -n "$openssl" ]; then
   fail 'OpenSSL command not found.'
 fi
 
-bot_verifier=`/bin/echo -n $WERCKER_LINGR_NOTIFY_BOT_ID$WERCKER_LINGR_NOTIFY_SECRET | $openssl sha1`
+bot_verifier=`/bin/echo -n $WERCKER_LINGR_NOTIFY_BOT_ID$WERCKER_LINGR_NOTIFY_SECRET | $openssl sha1 | awk '{print $2}'`
 
 if [ ! -n "$WERCKER_LINGR_NOTIFY_ROOM_ID" ]; then
   fail 'Please specify room-id property.'
