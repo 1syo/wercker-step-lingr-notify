@@ -1,5 +1,3 @@
-#!/bin/sh
-
 if [ "$WERCKER_LINGR_NOTIFY_ON" = "failed" ]; then
   if [ "$WERCKER_RESULT" = "passed" ]; then
     info "Skipping..."
@@ -10,62 +8,52 @@ fi
 if [ ! -n "$WERCKER_LINGR_NOTIFY_BOT_ID" ]; then
   fail 'Please specify bot-id property.'
 fi
-info $WERCKER_LINGR_NOTIFY_BOT_ID
+info "bot_id: $WERCKER_LINGR_NOTIFY_BOT_ID"
 
 if [ ! -n "$WERCKER_LINGR_NOTIFY_SECRET" ]; then
   fail 'Please specify secret property.'
 fi
 
+if [ ! -n "$WERCKER_LINGR_NOTIFY_ROOM_ID" ]; then
+  fail 'Please specify room-id property.'
+fi
+info "room_id: $WERCKER_LINGR_NOTIFY_ROOM_ID"
 
 openssl=`which openssl`
 if [ ! -n "$openssl" ]; then
   fail 'OpenSSL command not found.'
 fi
 
-bot_verifier=`/bin/echo -n $WERCKER_LINGR_NOTIFY_BOT_ID$WERCKER_LINGR_NOTIFY_SECRET | $openssl sha1 | awk '{print $2}'`
-
-if [ ! -n "$WERCKER_LINGR_NOTIFY_ROOM_ID" ]; then
-  fail 'Please specify room-id property.'
-fi
-info $WERCKER_LINGR_NOTIFY_ROOM_ID
-
-
-if [ ! -n "$WERCKER_LINGR_NOTIFY_PASSED_MESSAGE" ]; then
-  if [ ! -n "$DEPLOY" ]; then
-    passed_message="$WERCKER_APPLICATION_OWNER_NAME/$WERCKER_APPLICATION_NAME: build of $WERCKER_GIT_BRANCH by $WERCKER_STARTED_BY passed."
-  else
-    passed_message="$WERCKER_APPLICATION_OWNER_NAME/$WERCKER_APPLICATION_NAME: deploy to $WERCKER_DEPLOYTARGET_NAME by $WERCKER_STARTED_BY passed."
-  fi
-else
-  passed_message="$WERCKER_LINGR_NOTIFY_PASSED_MESSAGE"
-fi
-
-if [ ! -n "$WERCKER_LINGR_NOTIFY_FAILED_MESSAGE" ]; then
-  if [ ! -n "$DEPLOY" ]; then
-    failed_message="$WERCKER_APPLICATION_OWNER_NAME/$WERCKER_APPLICATION_NAME: build of $WERCKER_GIT_BRANCH by $WERCKER_STARTED_BY failed."
-  else
-    failed_message="$WERCKER_APPLICATION_OWNER_NAME/$WERCKER_APPLICATION_NAME: deploy to $WERCKER_DEPLOYTARGET_NAME by $WERCKER_STARTED_BY failed."
-  fi
-else
-  failed_message="$WERCKER_LINGR_NOTIFY_FAILED_MESSAGE"
-fi
+bot_verifier=`echo -n $WERCKER_LINGR_NOTIFY_BOT_ID$WERCKER_LINGR_NOTIFY_SECRET | $openssl sha1 | awk '{print $2}'`
 
 if [ "$WERCKER_RESULT" = "passed" ]; then
-  message="$passed_message"
+  status="SUCCESS"
 else
-  message="$failed_message"
+  status="FAILURE"
 fi
-info "$message"
+info "status: $status"
 
-
-curl=`which curl`
-if [ ! -n "$curl" ]; then
-  fail 'Curl command not found.'
+if [ "$CI" = "true" ]; then
+  step="build"
+  id=$WERCKER_BUILD_ID
+  url=$WERCKER_BUILD_URL
+elif [ "$DEPLOY" = "true" ]; then
+  step="deploy"
+  id=$WERCKER_DEPLOY_ID
+  url=$WERCKER_DEPLOY_URL
+else
+  step="build"
+  id=$WERCKER_BUILD_ID
+  url=$WERCKER_BUILD_URL
 fi
 
-$curl -G -s \
+info "step: $step"
+info "id: $id"
+info "url: $url"
+
+curl -G -s \
   --data-urlencode "bot=$WERCKER_LINGR_NOTIFY_BOT_ID" \
   --data-urlencode "bot_verifier=$bot_verifier" \
   --data-urlencode "room=$WERCKER_LINGR_NOTIFY_ROOM_ID" \
-  --data-urlencode "text=$message" \
-  http://lingr.com/api/room/say > /dev/null
+  --data-urlencode "text=Project $WERCKER_APPLICATION_NAME $step $number, $url: $status" \
+  http://lingr.com/api/room/say
