@@ -55,5 +55,5 @@ curl -G -s \
   --data-urlencode "bot=$WERCKER_LINGR_NOTIFY_BOT_ID" \
   --data-urlencode "bot_verifier=$bot_verifier" \
   --data-urlencode "room=$WERCKER_LINGR_NOTIFY_ROOM_ID" \
-  --data-urlencode "text=Project $WERCKER_APPLICATION_NAME $step $number, $url: $status" \
+  --data-urlencode "text=Project $WERCKER_APPLICATION_NAME $step $number, $url : $status" \
   http://lingr.com/api/room/say
