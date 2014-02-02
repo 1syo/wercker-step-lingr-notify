@@ -51,9 +51,18 @@ info "step: $step"
 info "id: $id"
 info "url: $url"
 
-curl -G -s \
+result=`curl -G -s \
   --data-urlencode "bot=$WERCKER_LINGR_NOTIFY_BOT_ID" \
   --data-urlencode "bot_verifier=$bot_verifier" \
   --data-urlencode "room=$WERCKER_LINGR_NOTIFY_ROOM_ID" \
   --data-urlencode "text=Project $WERCKER_APPLICATION_NAME $step $number, $url : $status" \
-  http://lingr.com/api/room/say
+  http://lingr.com/api/room/say \
+  --output "$WERCKER_STEP_TEMP/result.txt" \
+  --write-out "%{http_code}"`
+
+if [ "$result" = "200" ]; then
+  success "Finished successfully!"
+else
+  echo -e "`cat $WERCKER_STEP_TEMP/result.txt`"
+  fail "Finished Unsuccessfully."
+fi
